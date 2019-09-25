@@ -1,0 +1,17 @@
+{
+  "name": "transbanl/plugins-utils",
+  "description": "set of tools and utils for use in transbank php plugins",
+  "version": "1.0.0",
+  "require": {
+    "php": "^7",
+    "ext-json": "*",
+    "tecnickcom/tcpdf": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Transbank\\PluginsUtils\\": [
+        "lib"
+      ]
+    }
+  }
+}
