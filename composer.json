@@ -5,7 +5,9 @@
   "require": {
     "php": "^7",
     "ext-json": "*",
-    "tecnickcom/tcpdf": "^6.3"
+    "tecnickcom/tcpdf": "^6.3",
+    "studio24/rotate": "^1.0",
+    "apache/log4php": "^2.3"
   },
   "autoload": {
     "psr-4": {
