@@ -1,5 +1,5 @@
 {
-  "name": "transbanl/plugins-utils",
+  "name": "transbank/plugins-utils",
   "description": "set of tools and utils for use in transbank php plugins",
   "version": "1.0.0",
   "require": {

@@ -70,7 +70,7 @@ class ReportPDF
             $this->buffer.= '</table></body></html>';
     }
 
-    public function genPDF($jsonData)
+    public function getReport($jsonData)
     {
         $obj = json_decode($jsonData, true);
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
