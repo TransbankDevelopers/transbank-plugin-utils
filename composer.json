@@ -2,13 +2,20 @@
   "name": "transbank/plugins-utils",
   "description": "set of tools and utils for use in transbank php plugins",
   "version": "1.0.0",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/TransbankDevelopers/transbank-sdk-php"
+    }
+  ],
   "require": {
     "ext-json": "*",
     "tecnickcom/tcpdf": "^6.3",
     "studio24/rotate": "^1.0",
     "apache/log4php": "^2.3",
     "ext-openssl": "*",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "transbank/transbank-sdk": "dev-feat/add-rest-support"
   },
   "autoload": {
     "psr-4": {
