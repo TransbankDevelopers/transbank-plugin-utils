@@ -11,6 +11,8 @@
 
 namespace Transbank\PluginsUtils;
 
+use Transbank\Webpay\WebpayPlus;
+use Transbank\PluginsUtils\css\EcommerceInfo;
 
 class HealthCheck
 {
@@ -40,17 +42,35 @@ class HealthCheck
   const REST_KEYS = [
     'environment',
     'commerce_code',
-    'api_key'
+    'api_key',
+    'ecommerce,'
   ];
+  /**
+   * @var array
+   */
+  private $certificates;
+  /**
+   * @var array
+   */
+  private $certinfo;
+  /**
+   * @var EcommerceInfo
+   */
+  var $ecommerceInfo;
+  private $resExtensions;
 
   public function __construct($config, $soap = true) {
     if ($soap) {
       $this->verifyByKeys($config, self::LEGACY_KEYS);
       $this->setLegacyConfig($config);
+      $ecommerce = $config['ECOMMERCE'];
     } else {
       $this->verifyByKeys($config, self::REST_KEYS);
       $this->setRestConfig($config);
+      $ecommerce = $config['ecommerce'];
     }
+
+    $this->ecommerceInfo = new EcommerceInfo($ecommerce);
 
   }
 
@@ -177,7 +197,7 @@ class HealthCheck
   // creacion de retornos
   // arma array que entrega informacion del ecommerce: nombre, version instalada, ultima version disponible
   private function getPluginInfo($ecommerce) {
-    $data = $this->getEcommerceInfo($ecommerce);
+    $data = $this->ecommerceInfo->getEcommerceVersion();
     $result = array(
       'ecommerce' => $ecommerce,
       'ecommerce_version' => $data['current_ecommerce_version'],
@@ -242,23 +262,24 @@ class HealthCheck
   }
 
   public function setInitTransaction() {
-    $transbankSdkWebpay = new TransbankSdkWebpay($this->config);
-    $amount = 990;
-    $buyOrder = "_Healthcheck_";
-    $sessionId = uniqid();
-    $returnUrl = "https://webpay3gint.transbank.cl/filtroUnificado/initTransaction";
-    $finalUrl = "https://webpay3gint.transbank.cl/filtroUnificado/initTransaction";
-    $result = $transbankSdkWebpay->initTransaction($amount, $sessionId, $buyOrder, $returnUrl, $finalUrl);
+    $amount = 1000;
+    $buyOrder = "_Healthcheck_".rand(1, 1000);
+    $sessionId = rand(1,1000);
+    $returnUrl = '/returnUrl';
+    try {
+      $result = WebpayPlus\Transaction::create($buyOrder, $sessionId, $amount, $returnUrl);
+    } catch (WebpayPlus\Exceptions\TransactionCreateException $e) {
+      $result = array('error' => $e);
+    }
+
     if ($result) {
-      if (!empty($result["error"]) && isset($result["error"])) {
+      if (!empty($result->getToken())) {
         $status = 'Error';
       } else {
         $status = 'OK';
       }
     } else {
-      if (array_key_exists('error', $result)) {
-        $status =  "Error";
-      }
+      $status =  "Error";
     }
     $response = array(
       'status' => array('string' => $status),

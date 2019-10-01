@@ -27,6 +27,7 @@ class EcommerceInfo
         $result = $this->getMagentoInfo();
         break;
     }
+    return $result;
   }
 
   private function getLastGitHubReleaseVersion($string) {
