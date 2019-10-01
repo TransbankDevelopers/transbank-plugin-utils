@@ -172,35 +172,7 @@ class HealthCheck
 
   //obtiene ultimas versiones
   // permite un maximo de 60 consultas por hora
-  private function getLastGitHubReleaseVersion($string) {
-    $baseurl = 'https://api.github.com/repos/'.$string.'/releases/latest';
-    $agent = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)';
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $baseurl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_USERAGENT, $agent);
-    $content=curl_exec($ch);
-    curl_close($ch);
-    $con = json_decode($content, true);
-    $version = $con['tag_name'];
-    return $version;
-  }
 
-  // funcion para obtener info de cada ecommerce, si el ecommerce es incorrecto o no esta seteado se escapa como respuesta "NO APLICA"
-  private function getEcommerceInfo($ecommerce) {
-    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-    $productMetadata = $objectManager->get('Magento\Framework\App\ProductMetadataInterface');
-    $actualversion = $productMetadata->getVersion();
-    $lastversion = $this->getLastGitHubReleaseVersion('Magento/Magento2');
-    $plugininfo = $objectManager->get('Magento\Framework\Module\ModuleList')->getOne('Transbank_Webpay');
-    $currentplugin = $plugininfo['setup_version'];
-    $result = array(
-      'current_ecommerce_version' => $actualversion,
-      'last_ecommerce_version' => $lastversion,
-      'current_plugin_version' => $currentplugin
-    );
-    return $result;
-  }
 
   // creacion de retornos
   // arma array que entrega informacion del ecommerce: nombre, version instalada, ultima version disponible

@@ -30,12 +30,14 @@ class LogHandler
     private $confWeight;
     private $configuration;
     private $logger;
+    private $lockfile;
 
     public function __construct($ecommerce, $days = 0, $weight = '2MB', $info = false)
     {
         $base = '';
         if ($ecommerce == 'magento') {
             $this->logDir = BP . '/var/log/Transbank_Webpay';
+            $this->lockFile = BP . '/var/lockfile.lock';
         } elseif ($ecommerce == 'prestashop') {
           $this->logDir = _PS_ROOT_DIR_."/var/logs/Transbank_webpay";
         } elseif ($ecommerce == 'woocommerce') {
@@ -104,6 +106,24 @@ class LogHandler
             return false;
         }
     }
+
+  public function setparamsconf($days, $weight) {
+    if (file_exists($this->lockfile)) {
+      $file = fopen($this->lockfile, "w") or die("No se puede truncar archivo");
+      if (! is_numeric($days) or $days == null or $days == '' or $days === false) {
+        $days = 7;
+      }
+      $txt = "{$days}\n";
+      fwrite($file, $txt);
+      $txt = "{$weight}\n";
+      fwrite($file, $txt);
+      fclose($file);
+      // chmod($this->lockfile, 0600);
+    } else {
+      //  echo "error!: no se ha podido renovar configuracion";
+      exit;
+    }
+  }
 
     public function getValidateLockFile() {
         if (!file_exists($this->lockFile)) {
